@@ -14,7 +14,7 @@ namespace marketeer.Controllers
         { 
             BootstrapServers = "kafka:29092" 
         };
-        private readonly string topic = "offer";
+        private readonly string topic = "offer2";
         [HttpPost]
         public IActionResult Post([FromBody] Offer offer)
         {
@@ -32,6 +32,7 @@ namespace marketeer.Controllers
                         .GetAwaiter()
                         .GetResult();
                     Console.WriteLine(result.Value);
+                    //Console.WriteLine(result);
                     return result;
                 }
                 catch (Exception e)

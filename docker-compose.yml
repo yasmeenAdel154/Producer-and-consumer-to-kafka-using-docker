@@ -15,7 +15,7 @@ services:
     image: obsidiandynamics/kafka
     container_name: kafka
     ports:
-      - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER_INTERNAL:PLAINTEXT,DOCKER_EXTERNAL:PLAINTEXT
       KAFKA_LISTENERS: DOCKER_INTERNAL://:29092,DOCKER_EXTERNAL://:9092
@@ -26,6 +26,8 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+
+
       
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest

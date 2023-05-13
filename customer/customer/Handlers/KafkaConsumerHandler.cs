@@ -16,7 +16,7 @@ namespace customer.Handlers
             _context = context;
         }
 
-        private readonly string topic = "offer";
+        private readonly string topic = "offer2";
        
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -26,39 +26,53 @@ namespace customer.Handlers
             var conf = new ConsumerConfig
             {
                 GroupId = "sa",
-                BootstrapServers = "kafka:29092",
+                BootstrapServers = "kafka:29092" ,
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
-            using (var builder = new ConsumerBuilder<Ignore,
-                string>(conf).Build())
-            {
-                builder.Subscribe(topic);
-                var cancelToken = new CancellationTokenSource();
+            var builder = new ConsumerBuilder<Ignore, string>(conf).Build();
+            //builder.Subscribe(topic);
+             
                 try
                 {
-                    while (true)
+                    builder.Subscribe(topic);
+                    //.WriteLine("it is ok");
+                    var cancelToken = new CancellationTokenSource();
+                    //Console.WriteLine("it is ok");
+                    while (!cancelToken.IsCancellationRequested)
                     {
-                        var consumer = builder.Consume(cancelToken.Token);
-
-                        Offer offer = JsonConvert.DeserializeObject<Offer>(consumer.Message.Value);
-                        Console.WriteLine($"Message: {consumer.Message.Value} received from {consumer.TopicPartitionOffset}");
                         
-                        if ( offer.deleted ) {
-                            DeleteOffer(offer.offerID);
+                       // Console.WriteLine("it is ok");
+                        var consumer = builder.Consume(cancelToken.Token);
+                       // Console.WriteLine("it is ok");
+
+                        //if ( consumer.Message != null )
+                        {
+                       
+                            Offer offer = JsonConvert.DeserializeObject<Offer>(consumer.Message.Value);
+                            Console.WriteLine($"Message: {consumer.Message.Value} received from {consumer.TopicPartitionOffset}");
+                            //Console.WriteLine(offer.deleted);
+                        }
+
+                        
+                        
+                        /*if ( offer.deleted ) {
+                            //DeleteOffer(offer.offerID);
                         }
                         else
                         {
-                            PostOffer(offer) ;
-                        }
+                            //PostOffer(offer) ;
+                        }*/
 
-                        Console.WriteLine(offer.deleted);
+                        
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Console.WriteLine("it is not ok");
+                    Console.WriteLine(ex.ToString() );
                     builder.Close();
                 }
-            }
+            
             return Task.CompletedTask;
         }
 
@@ -68,7 +82,7 @@ namespace customer.Handlers
             return Task.CompletedTask;
         }
 
-        
+        /*
 
         public async Task<string> PostOffer(Offer offer)
         {
@@ -134,5 +148,7 @@ namespace customer.Handlers
         {
             return (_context.offer?.Any(e => e.offerID == id)).GetValueOrDefault();
         }
+
+        */
     }
 }
